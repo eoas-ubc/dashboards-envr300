@@ -1,24 +1,10 @@
----
-jupyter:
-  jupytext:
-    cell_metadata_filter: -all
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
-  kernelspec:
-    display_name: Python 3
-    language: python
-    name: python3
----
+# %% [markdown]
+# ## Ozone at YVR and Abbotsford
+#
+# **Objectives**: to plot 1) either raw dataset or both; 2) either 7-day avg, or both, 3) either maximum daily 8-hr avg, or both; 4) do this with dashboard and plotly.
+#
 
-
-## Ozone at YVR and Abbotsford
-
-**Objectives**: to plot 1) either raw dataset or both; 2) either 7-day avg, or both, 3) either maximum daily 8-hr avg, or both; 4) do this with dashboard and plotly.
-
-```{code-cell} ipython3
+# %%
 # intro to figurewidgets at https://plotly.com/python/figurewidget/
 
 import pandas as pd
@@ -32,16 +18,14 @@ init_notebook_mode(connected = True)
 
 import ipywidgets as widgets
 from ipywidgets import interact
-```
 
-```{code-cell} ipython3
+# %%
 # read in the data from the prepared CSV file. 
 all_O3 = pd.read_csv("data/YVR and Abbotsford 2017.csv",index_col=0, parse_dates=['date_pst'])
 # all_O3.head()
 # all_O3.columns
-```
 
-```{code-cell} ipython3
+# %%
 # rolling n-point moving average (hence the .mean()); data points are 1hr apart, hence 24/day or 168/wk.
 days = 7
 hrs = 24*days
@@ -53,17 +37,15 @@ all_O3['YVR_smoothed']=YVR_smoothed
 all_O3['Abb_smoothed']=Abb_smoothed
 
 # all_O3['Abb_smoothed']
-```
 
-```{code-cell} ipython3
+# %%
 # rolling 8hr moving "average" (hence the .mean()); points are 1hr apart
 yvr_8hr_O3 = all_O3.YVR_ppb.rolling(8,min_periods=6).mean()
 abb_8hr_O3 = all_O3.Abbotsford_ppb.rolling(8,min_periods=6).mean()
 
 # abb_8hr_O3[:20]
-```
 
-```{code-cell} ipython3
+# %%
 # resample result by "day" (the 'D'), choosing the max value. 
 YVR_max8hrsavg=yvr_8hr_O3.resample('D').max()
 Abb_max8hrsavg=abb_8hr_O3.resample('D').max()
@@ -75,9 +57,8 @@ Abb_max8hrsavg=abb_8hr_O3.resample('D').max()
 # all_O3['Abb_max8hrsavg']=Abb_max8hrsavg
 
 # YVR_max8hrsavg
-```
 
-```{code-cell} ipython3
+# %%
 # Test by plotting MDA8 using pandas plotting
 
 #ax = YVR_max8hrsavg.plot(figsize=(9, 4), color='g')
@@ -89,9 +70,8 @@ Abb_max8hrsavg=abb_8hr_O3.resample('D').max()
 #ax.set_title('MDA8 of YVR(Blue) and Abb (Red)')
 
 # plt.show()
-```
 
-```{code-cell} ipython3
+# %%
 # first define the dashboard controls or "widget objects"
 # YVR = Vancouver airport
 # Abb = Abbotsford
@@ -137,9 +117,8 @@ Abb_mda8 = widgets.Checkbox(
 #containers not useful when using the "decorator" approach to interactive widgets. 
 #container1 = widgets.VBox(children=[YVR_raw, Abb_raw])
 #container2 = widgets.VBox(children=[YVR_MDA8, Abb_MDA8])
-```
 
-```{code-cell} ipython3
+# %%
 # Build the figure
 
 g = go.FigureWidget()
@@ -153,9 +132,8 @@ g.layout.yaxis.title = 'Amplitude'
 #g.add_scatter(x=all_O3.index, y=all_O3.YVR_max8hrsavg, mode="lines", line=dict(color='green'), name="YVR mda8")
 
 #g
-```
 
-```{code-cell} ipython3
+# %%
 # function to handle input from the widgets, and alter the state of the graph
 # for use of decorator `@interact` see https://plotly.com/python/v3/interact-decorator/
 # find line parameters at https://plotly.com/python/line-charts/ 
@@ -198,12 +176,7 @@ def update(YVR_raw, Abb_raw, YVR_smooth, Abb_smooth, YVR_mda8, Abb_mda8):
 g
 
 # Problem with this version is I'm not sure we can build containors to format the dashboard. 
-```
 
-```{code-cell} ipython3
+# %%
 
-```
-
-```{code-cell} ipython3
-
-```
+# %%
